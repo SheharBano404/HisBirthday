@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>His_Birthday</title>
+  <style>
+    :root {
+      --bgA: #ffdde1;
+      --bgB: #ffc0cb;
+      --introSize: clamp(1.1rem, 5vw, 2rem);
+      --introLetterSpace: clamp(1px, 0.4vw, 3px);
+      --nbW: min(450px, 92vw);
+      --nbH: min(600px, 75svh);
+      --nbPadTop: clamp(40px, 12vw, 60px);
+      --nbPadSide: clamp(10px, 5vw, 25px);
+      --nbPadLeft: clamp(45px, 12vw, 65px);
+      --ingredientSize: clamp(0.9rem, 3.8vw, 1.25rem);
+      --finalSize: clamp(1.5rem, 8vw, 2.8rem);
+    }
+
+    body {
+      margin: 0;
+      height: 100svh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, var(--bgA) 0%, var(--bgB) 100%);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Intro Section */
+    #intro {
+      position: absolute;
+      width: 85%;
+      max-width: 600px;
+      font-size: var(--introSize);
+      font-weight: bold;
+      text-align: center;
+      color: #ff69b4;
+      line-height: 1.4;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      letter-spacing: var(--introLetterSpace);
+      z-index: 10;
+    }
+
+    .letter {
+      opacity: 0;
+      display: inline-block;
+      animation: bounceFade 0.6s forwards, sway 2s infinite alternate;
+      background: linear-gradient(45deg, #ff5fa2, #ff99cc, #ffe1f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes bounceFade {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes sway {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-3px) rotate(-1deg); }
+    }
+
+    /* Notebook Section */
+    #notebook-container {
+      position: relative;
+      width: var(--nbW);
+      height: var(--nbH);
+      transform: rotate(-2deg);
+      filter: drop-shadow(5px 10px 15px rgba(0, 0, 0, 0.15));
+      opacity: 0;
+      transition: opacity 1s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .notebook-page-layer {
+      position: absolute;
+      width: 100%; height: 100%;
+      background: #fff5fa;
+      border-radius: 12px;
+      top: 4px; left: 4px;
+      z-index: 0;
+    }
+
+    #notebook {
+      position: relative;
+      width: 100%; height: 100%;
+      background: #fff8fc;
+      border: 1.5px solid #ffb6c1;
+      border-radius: 12px;
+      z-index: 2;
+      padding: var(--nbPadTop) var(--nbPadSide) var(--nbPadSide) var(--nbPadLeft);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #notebook::before {
+      content: ''; position: absolute;
+      left: clamp(35px, 10vw, 50px); top: 0; bottom: 0;
+      width: 1.5px; background-color: rgba(255, 105, 180, 0.4);
+    }
+
+    #notebook::after {
+      content: ''; position: absolute;
+      left: 10px; top: 20px; bottom: 20px;
+      width: 12px;
+      background: repeating-linear-gradient(to bottom, #f08080, #f08080 15px, transparent 15px, transparent 25px);
+      border-radius: 5px;
+      opacity: 0.7;
+    }
+
+    /* Pencil */
+    #pencil {
+  position: fixed;
+  width: clamp(50px, 15vw, 70px);
+  height: clamp(10px, 2.5vw, 14px);
+  z-index: 100;
+  transform-origin: left center;
+  transform: rotate(-15deg); /* tilt tip side up */
+  opacity: 0;
+  pointer-events: none;
+  margin-top: 15px;
+  margin-left: -40px;
+  transition: left 0.1s linear, top 0.1s linear;
+}
+
+    #pencil-body {
+      position: absolute; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, #ffdb58, #e6c548);
+      clip-path: polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%);
+    }
+    #pencil-tip {
+      position: absolute; width: 0; height: 0;
+      top: 20%; right: 0;
+      border-left: 8px solid #333;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+    #pencil-eraser {
+      position: absolute; width: 12px; height: 100%;
+      background: #f08080; left: -12px; border-radius: 2px 0 0 2px;
+    }
+
+    /* Bee attached to pencil */
+    #honeybee {
+      position: absolute;
+      right: 33px;   /* offset near tip */
+      top: -5px;     /* offset above pencil */
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      opacity: 1;
+      pointer-events: none;
+      animation: buzz 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes buzz {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-5px) rotate(-15deg); }
+    }
+
+    .ingredient {
+      font-size: var(--ingredientSize);
+      color: #d14781;
+      margin-bottom: clamp(6px, 2vh, 12px);
+      line-height: 1.4;
+      min-height: 1.2em;
+      font-weight: 500;
+    }
+
+    #overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      opacity: 0; display: flex; justify-content: center; align-items: center;
+      z-index: 200; transition: opacity 1s; pointer-events: none;
+    }
+    #overlay.active { pointer-events: all; opacity: 1; }
+
+    #finalMessage {
+      font-size: var(--finalSize);
+      color: #ff69b4; text-align: center; opacity: 0;
+      transition: opacity 1s; font-weight: bold;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="intro"></div>
+
+  <div id="notebook-container">
+    <div class="notebook-page-layer"></div>
+    <div id="notebook"></div>
+  </div>
+
+  <div id="pencil">
+    <div id="pencil-eraser"></div>
+    <div id="pencil-body"></div>
+    <div id="pencil-tip"></div>
+    <div id="honeybee">🐝</div> <!-- Bee now inside pencil -->
+  </div>
+
+  <div id="overlay">
+    <div id="finalMessage">Let's Start Baking!</div>
+  </div>
+
+  <canvas id="fireworksCanvas"
+  style="position:fixed; inset:0; z-index:300; pointer-events:none;">
+</canvas>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const notebookContainer = document.getElementById('notebook-container');
+    const pencil = document.getElementById('pencil');
+    const notebook = document.getElementById('notebook');
+    const overlay = document.getElementById('overlay');
+    const finalMessage = document.getElementById('finalMessage');
+
+    const introText = "Let's dance into the kitchen, & bake a cake of love...";
+    const ingredientsText = [
+      "A Recipe for the Heart:",
+      "",
+      "• 2 cups of love-filled flour",
+      "• 1 cup sugar kissed with joy",
+      "• 1/2 cup butter, soft as hugs",
+      "• 3 eggs, happiness whisked in",
+      "• 1 tsp vanilla, dreams in a drop",
+      "",
+      "Mix well and bake with care!"
+    ];
+
+    // Build Intro
+    introText.split('').forEach((char, idx) => {
+      const span = document.createElement('span');
+      span.className = 'letter';
+      span.style.animationDelay = `${idx * 0.05}s`;
+      span.textContent = char === ' ' ? '\u00A0' : char;
+      intro.appendChild(span);
+    });
+
+    setTimeout(() => {
+  intro.style.transition = "opacity 0.8s";
+  intro.style.opacity = 0;
+  setTimeout(() => {
+    intro.style.display = 'none';
+    notebookContainer.style.opacity = 1;
+    pencil.style.opacity = 1;
+
+    // 👉 Start pencil at the very left of the notebook
+    const nbRect = notebook.getBoundingClientRect();
+    pencil.style.left = (nbRect.left + -12) + 'px'; // small padding from edge
+    pencil.style.top = (nbRect.top + 40) + 'px';  // align near first line
+
+    currentLine = 0; 
+    startWriting();  // begin writing from first word
+  }, 800);
+}, (introText.length * 50) + 2000);
+
+
+    // Prepare Line Containers
+    const lines = ingredientsText.map(t => {
+      const div = document.createElement('div');
+      div.className = 'ingredient';
+      notebook.appendChild(div);
+      return { div, text: t, idx: 0 };
+    });
+
+    let currentLine = 0;
+
+    function startWriting() {
+      if (currentLine >= lines.length) {
+        setTimeout(endPage, 1500);
+        return;
+      }
+
+      const line = lines[currentLine];
+      if (line.text === "") { // Handle empty lines
+        currentLine++;
+        startWriting();
+        return;
+      }
+
+      if (line.idx < line.text.length) {
+        const span = document.createElement('span');
+        span.textContent = line.text[line.idx];
+        line.div.appendChild(span);
+
+        // Update Pencil position (bee follows automatically)
+        const rect = span.getBoundingClientRect();
+        pencil.style.left = (rect.right + 2) + 'px';
+        pencil.style.top = (rect.top + (rect.height / 2)) + 'px';
+
+        line.idx++;
+        setTimeout(startWriting, 60);
+      } else {
+        currentLine++;
+        setTimeout(startWriting, 300);
+      }
+    }
+
+    function endPage() {
+      overlay.classList.add('active');
+      setTimeout(() => {
+        finalMessage.style.opacity = 1;
+        setTimeout(() => { 
+          // Redirect - make sure 6.html exists in your project
+          window.location.href = '6.html'; 
+        }, 3500);
+      }, 10000);
+    }
+/* ---------- FIREWORKS (STARTS ON BLACK SCREEN) ---------- */
+const fwCanvas = document.getElementById("fireworksCanvas");
+const fwCtx = fwCanvas.getContext("2d");
+
+function resizeFW(){
+  fwCanvas.width = window.innerWidth;
+  fwCanvas.height = window.innerHeight;
+}
+resizeFW();
+window.addEventListener("resize", resizeFW);
+
+let fireworks = [];
+let fireworksRunning = false;
+
+class Firework {
+  constructor(){
+    this.x = Math.random() * fwCanvas.width;
+    this.y = fwCanvas.height;
+    this.targetY = Math.random() * fwCanvas.height * 0.4;
+    this.speed = Math.random() * 3 + 4;
+    this.exploded = false;
+    this.particles = [];
+  }
+
+  update(){
+    if(!this.exploded){
+      this.y -= this.speed;
+      if(this.y <= this.targetY){
+        this.explode();
+      }
+    } else {
+      this.particles.forEach(p => p.update());
+    }
+  }
+
+  draw(){
+    if(!this.exploded){
+      fwCtx.fillStyle = "#fff";
+      fwCtx.beginPath();
+      fwCtx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+      fwCtx.fill();
+    } else {
+      this.particles.forEach(p => p.draw());
+    }
+  }
+
+  explode(){
+    this.exploded = true;
+    const colors = [
+      "#ff69b4", "#ffc0cb", "#ff1493",
+      "#ffb6c1", "#ffd700", "#87cefa",
+      "#98fb98", "#dda0dd"
+    ];
+    for(let i = 0; i < 40; i++){
+      this.particles.push(new Particle(this.x, this.y, colors));
+    }
+  }
+}
+
+class Particle {
+  constructor(x, y, colors){
+    this.x = x;
+    this.y = y;
+    this.angle = Math.random() * Math.PI * 2;
+    this.speed = Math.random() * 4 + 1.5;
+    this.radius = Math.random() * 2.5 + 1;
+    this.life = 70;
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  update(){
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    this.life--;
+  }
+
+  draw(){
+    if(this.life <= 0) return;
+    fwCtx.globalAlpha = this.life / 70;
+    fwCtx.fillStyle = this.color;
+    fwCtx.beginPath();
+    fwCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    fwCtx.fill();
+    fwCtx.globalAlpha = 1;
+  }
+}
+
+function animateFireworks(){
+  if(!fireworksRunning) return;
+
+  fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+  if(Math.random() < 0.07){
+    fireworks.push(new Firework());
+  }
+
+  fireworks.forEach((fw, i) => {
+    fw.update();
+    fw.draw();
+    if(fw.exploded && fw.particles.every(p => p.life <= 0)){
+      fireworks.splice(i, 1);
+    }
+  });
+
+  requestAnimationFrame(animateFireworks);
+}
+
+function startFireworks(){
+  if(fireworksRunning) return;
+  fireworksRunning = true;
+  animateFireworks();
+}
+
+/* ---------- TRIGGER FIREWORKS WHEN SCREEN TURNS BLACK ---------- */
+const observer = new MutationObserver(() => {
+  if(overlay.classList.contains("active")){
+    startFireworks();
+  }
+});
+
+observer.observe(overlay, { attributes: true });
+</script>
+
+</body>
+</html>
+

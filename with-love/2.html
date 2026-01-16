@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>His_Birthday</title>
+<style>
+/* Reset and basic styling */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', cursive, sans-serif; }
+
+html, body { 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    background: black; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+/* Typewriter container */
+#typewriter-container {
+    text-align: center;
+    color: white;
+    width: 90%; /* Limits width on mobile */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#typewriter {
+    /* Responsive font size: clamp(min, preferred, max) */
+    font-size: clamp(1.2rem, 5vw, 2.5rem); 
+    white-space: normal; /* Allows text to wrap on small screens */
+    color: white;
+    text-shadow: 0 0 5px #ff6f91, 0 0 10px #ff4b5c;
+    margin-bottom: 40px;
+    line-height: 1.4;
+}
+
+/* Cursor styling */
+.cursor {
+    border-right: 3px solid white;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { border-color: white; }
+    50% { border-color: transparent; }
+}
+
+/* Button styling */
+#letsgo-btn {
+    padding: 12px 40px;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    position: relative;
+    opacity: 0;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent; /* Removes blue box on mobile tap */
+}
+
+#letsgo-btn:hover, #letsgo-btn:active {
+    transform: scale(1.1);
+    background: #cc6d77;
+    border-color: #cc6d77;
+    box-shadow: 0 0 20px #ff6f91, 0 0 40px #ff4b5c;
+    text-shadow: 0 0 5px #fff, 0 0 10px #ffb6c1;
+}
+
+/* Hearts (real emojis) */
+.heart {
+    position: absolute;
+    font-size: 20px;
+    pointer-events: none;
+    user-select: none;
+    z-index: 10;
+}
+
+/* Adjustments for very small screens */
+@media (max-width: 480px) {
+    #typewriter-container { margin-top: 50px; }
+    #letsgo-btn { width: 80%; } /* Make button wider on small phones */
+}
+</style>
+</head>
+<body>
+
+<div id="typewriter-container">
+    <div id="typewriter"></div>
+    <button id="letsgo-btn">LET'S GO</button>
+</div>
+
+<script>
+const container = document.getElementById('typewriter-container');
+const typewriter = document.getElementById('typewriter');
+const button = document.getElementById('letsgo-btn');
+
+const text = "A little effort to make you feel special...";
+let i = 0;
+
+// Show text container
+container.style.opacity = 1;
+
+// Adding cursor span
+const cursorSpan = document.createElement('span');
+cursorSpan.className = 'cursor';
+typewriter.appendChild(cursorSpan);
+
+function typeSmooth() {
+    if (i < text.length) {
+        // Insert text before the cursor
+        cursorSpan.before(text.charAt(i));
+        i++;
+        setTimeout(typeSmooth, 100);
+    } else {
+        cursorSpan.remove(); // Remove cursor when done
+        button.style.opacity = 1;
+    }
+}
+
+typeSmooth();
+
+// Emit hearts logic
+let heartInterval;
+function startHearts() {
+    heartInterval = setInterval(() => emitHeart(button), 200);
+}
+function stopHearts() {
+    clearInterval(heartInterval);
+}
+
+// Support both Mouse and Touch
+button.addEventListener('mouseenter', startHearts);
+button.addEventListener('mouseleave', stopHearts);
+button.addEventListener('touchstart', startHearts);
+button.addEventListener('touchend', stopHearts);
+
+function emitHeart(btn) {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerText = '❤️';
+
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = 60 + Math.random() * 40;
+    const x = Math.cos(angle) * distance + 'px';
+    const y = Math.sin(angle) * distance + 'px';
+    const scale = 0.6 + Math.random() * 0.8;
+
+    heart.style.left = '50%';
+    heart.style.top = '50%';
+    heart.style.transform = `translate(-50%, -50%) scale(0)`;
+    btn.appendChild(heart);
+
+    setTimeout(() => {
+        heart.style.transition = 'transform 1.2s ease, opacity 1.2s ease';
+        heart.style.transform = `translate(calc(-50% + ${x}), calc(-50% + ${y})) scale(${scale})`;
+        heart.style.opacity = 0;
+    }, 50);
+
+    setTimeout(() => heart.remove(), 1300);
+}
+
+button.addEventListener('click', () => {
+    button.style.opacity = 0;
+    typewriter.style.opacity = 0;
+    setTimeout(() => {
+        window.location.href = "3.html";
+    }, 800);
+});
+</script>
+
+</body>
+</html>

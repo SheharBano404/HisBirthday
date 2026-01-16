@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>His_Birthday</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#07040d;
+    --bg2:#12081b;
+
+    --rose:#ff4d88;
+    --rose2:#ff7ab0;
+    --wine:#a01344;
+
+    --warm1:#ffb86b;
+    --warm2:#ff914a;
+    --gold:#ffd166;
+
+    --cyan:#22d3ee;
+    --violet:#a855f7;
+
+    --glass: rgba(255,255,255,.09);
+    --stroke: rgba(255,255,255,.14);
+    --shadow: 0 24px 80px rgba(0,0,0,.55);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html, body{ height:100%; }
+
+  body{
+    min-height: 100svh;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background:
+      radial-gradient(1100px 650px at 18% 18%, rgba(255,77,136,.14), transparent 60%),
+      radial-gradient(900px 600px at 82% 26%, rgba(34,211,238,.10), transparent 60%),
+      radial-gradient(900px 650px at 60% 88%, rgba(168,85,247,.10), transparent 60%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* soft sparkle dust */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.55;
+    background:
+      radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1px 1px at 24% 68%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1px 1px at 36% 40%, rgba(255,255,255,.40), transparent 60%),
+      radial-gradient(1px 1px at 58% 18%, rgba(255,255,255,.45), transparent 60%),
+      radial-gradient(1px 1px at 74% 56%, rgba(255,255,255,.32), transparent 60%),
+      radial-gradient(1px 1px at 86% 30%, rgba(255,255,255,.42), transparent 60%),
+      radial-gradient(1px 1px at 92% 82%, rgba(255,255,255,.45), transparent 60%);
+    filter: blur(.18px);
+    mix-blend-mode: screen;
+  }
+
+  /* subtle vignette */
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background: radial-gradient(70% 70% at 50% 45%, transparent 55%, rgba(0,0,0,.55));
+    opacity:.65;
+  }
+
+  /* Lamp Container (desktop behavior on all screens) */
+  #lamp-container{
+    position: fixed;
+    top: 150px;
+    left: 244px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+
+    isolation: isolate;
+    transform-origin: top left;
+    filter: drop-shadow(0 18px 34px rgba(0,0,0,.45));
+  }
+
+  @media (max-width: 900px){
+    #lamp-container{ top: 18px; left: 14px; transform: scale(.85); }
+  }
+  @media (max-width: 600px){
+    #lamp-container{ transform: scale(.72); }
+  }
+  @media (max-width: 420px), (max-height: 680px){
+    #lamp-container{ transform: scale(.62); }
+  }
+
+  /* Lamp Base */
+  #base{
+    width: 160px;
+    height: 22px;
+    border-radius: 50% / 100% 100% 0 0;
+    position: relative;
+    z-index: 1;
+    margin-top: -10px;
+
+    background:
+      radial-gradient(120px 16px at 50% 30%, rgba(255,255,255,.16), transparent 60%),
+      linear-gradient(to right, #5a3524, #2b160f, #5a3524);
+    box-shadow:
+      0 10px 22px rgba(0,0,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.10);
+  }
+
+  /* Lamp Pole (desktop) */
+  #pole{
+    width: 16px;
+    height: 550px; /* desktop height */
+    border-radius: 10px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: -5px;
+
+    background:
+      linear-gradient(to right, rgba(255,255,255,.10), transparent 40%),
+      linear-gradient(to bottom, #3a3a3a, #101010, #3a3a3a);
+    box-shadow:
+      inset 0 0 10px rgba(0,0,0,.75),
+      0 10px 18px rgba(0,0,0,.35);
+  }
+
+  /* ✅ MOBILE: pole becomes shorter */
+  @media (max-width: 700px){
+    #pole{ height: 320px; }
+  }
+  @media (max-width: 420px), (max-height: 680px){
+    #pole{ height: 260px; }
+  }
+
+  /* Lamp Neck */
+  #neck{
+    width: 22px;
+    height: 56px;
+    border-radius: 8px 8px 0 0;
+    position: relative;
+    z-index: 3;
+    margin-bottom: -44px;
+
+    background:
+      radial-gradient(18px 10px at 50% 20%, rgba(255,255,255,.16), transparent 60%),
+      linear-gradient(to bottom, #3a3a3a, #151515);
+    box-shadow: inset 0 0 10px rgba(0,0,0,.65);
+  }
+
+  /* Bulb inside shade */
+  #bulb{
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+
+    background: radial-gradient(circle at 45% 35%, #fff, #eaeaea 38%, #cfcfcf 78%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,.25);
+
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out, box-shadow 0.1s ease-in-out, filter 0.1s ease-in-out;
+    filter: saturate(1.05);
+  }
+
+  /* Shade */
+  #shade{
+    width: 270px;
+    height: 160px;
+    border-radius: 14px;
+    position: relative;
+    z-index: 5;
+
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    overflow: visible;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, filter .25s ease;
+
+    background:
+      radial-gradient(200px 90px at 50% 22%, rgba(255,255,255,.22), transparent 65%),
+      linear-gradient(180deg, #f08a2f, #e66b1c);
+    box-shadow:
+      0 16px 34px rgba(0,0,0,.48),
+      inset 0 0 24px rgba(255,190,120,.26);
+  }
+
+  #shade::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background: repeating-linear-gradient(
+      to right,
+      rgba(0,0,0,0.10) 0px,
+      rgba(0,0,0,0.10) 3px,
+      transparent 3px,
+      transparent 12px
+    );
+    opacity: .40;
+    pointer-events:none;
+  }
+
+  #shade::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.18);
+    opacity:.65;
+    pointer-events:none;
+  }
+
+  .lit #shade{
+    filter: saturate(1.05);
+    background:
+      radial-gradient(240px 130px at 50% 22%, rgba(255,255,255,.32), transparent 65%),
+      linear-gradient(180deg, #ffb86b, #ff914a);
+    box-shadow:
+      0 18px 40px rgba(255,170,90,.30),
+      0 0 80px rgba(255,145,74,.16),
+      inset 0 0 34px rgba(255,255,200,.55);
+  }
+
+  /* Draggable Wire */
+  #wire{
+    position: absolute;
+    width: 4px;
+    height: 80px;
+    top: 6px;
+    right: 46px;
+    border-radius: 999px;
+    cursor: grab;
+    z-index: 6;
+
+    background:
+      linear-gradient(to right, rgba(255,255,255,.25), rgba(255,255,255,0) 55%),
+      linear-gradient(to bottom, #9a9a9a, #6b6b6b);
+    box-shadow: 0 10px 18px rgba(0,0,0,.35);
+
+    touch-action: none;
+  }
+
+  #wire-ball{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -9px;
+    left: -5px;
+
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), transparent 55%),
+      linear-gradient(180deg, #6f6f6f, #4a4a4a);
+    box-shadow:
+      0 10px 18px rgba(0,0,0,.45),
+      inset 0 0 6px rgba(0,0,0,.35);
+  }
+
+  /* Spotlight Effect from Bulb */
+  #spotlight-effect{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: all 0.1s linear;
+
+    background:
+      radial-gradient(closest-side at 50% 0%,
+        rgba(255,245,200,.55),
+        rgba(255,200,120,.18) 55%,
+        rgba(255,200,120,0) 100%
+      );
+    filter: blur(1px);
+  }
+
+  /* Lamp-mounted shape (shows when bulb OFF) */
+  #lamp-shape{
+    position: absolute;
+    top: 250px;
+    left: 85px;
+    z-index: 10;
+
+    padding: 10px 20px;
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.35);
+
+    transition: all 0.3s ease;
+    color: rgba(255,255,255,.30);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Click Me button */
+  #click-me{
+    position: absolute;
+    top: 250px;
+    left: 60px;
+    z-index: 10;
+
+    padding: 12px 22px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 16px;
+    cursor: pointer;
+
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 0.95em;
+    color: rgba(255,255,255,.96);
+
+    background:
+      radial-gradient(120px 70px at 30% 35%, rgba(255,255,255,.20), transparent 60%),
+      linear-gradient(135deg, rgba(255,77,136,.95), rgba(160,19,68,.95));
+    box-shadow:
+      0 20px 46px rgba(160,19,68,.22),
+      0 12px 30px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease, background 0.3s ease;
+    overflow: visible;
+    white-space: nowrap;
+  }
+
+  #click-me.show{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ✅ KEEP HOVER EFFECT */
+  #click-me:hover{
+    background:
+      radial-gradient(120px 70px at 30% 35%, rgba(255,255,255,.25), transparent 60%),
+      linear-gradient(135deg, rgba(255,183,77,.95), rgba(255,145,74,.95));
+    transform: translateY(-1px) scale(1.04);
+    box-shadow:
+      0 26px 60px rgba(255,145,74,.22),
+      0 18px 40px rgba(255,77,136,.14);
+  }
+
+  #click-me:hover::after{
+    content: '♡';
+    position: absolute;
+    font-size: 1.2em;
+    top: -14px;
+    left: -12px;
+    color: rgba(255,255,255,.92);
+    text-shadow: 0 10px 22px rgba(255,77,136,.25);
+    animation: sparkle 1s infinite alternate;
+    pointer-events:none;
+  }
+  #click-me:hover::before{
+    content: '♡';
+    position: absolute;
+    font-size: 1.2em;
+    bottom: -14px;
+    right: -12px;
+    color: rgba(255,255,255,.92);
+    text-shadow: 0 10px 22px rgba(255,77,136,.25);
+    animation: sparkle 1s infinite alternate-reverse;
+    pointer-events:none;
+  }
+
+  @keyframes sparkle{
+    0% { transform: scale(0.7) rotate(0deg); opacity: 0.6; }
+    50% { transform: scale(1.15) rotate(18deg); opacity: 1; }
+    100% { transform: scale(0.7) rotate(36deg); opacity: 0.6; }
+  }
+
+  /* Alert message */
+  #alert-message{
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+
+    min-width: 280px;
+    max-width: min(720px, 92vw);
+    padding: 14px 18px;
+    border-radius: 16px;
+
+    font-size: 1.02em;
+    font-weight: 700;
+    text-align: center;
+
+    color: rgba(255,255,255,.92);
+    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    backdrop-filter: blur(12px);
+
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  /* MOBILE: never show alert */
+  @media (max-width: 700px){
+    #alert-message{ display:none !important; }
+  }
+
+  /* Birthday Text */
+  #birthday-text1, #birthday-text2{
+    position: fixed;
+    z-index: 15;
+    opacity: 0; /* shown only after wire drag */
+    text-align: center;
+    letter-spacing: .04em;
+
+    background: linear-gradient(45deg, rgba(255,158,195,.95), rgba(255,77,136,.95), rgba(255,209,102,.90));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+    animation: floatGlow 2.2s ease-in-out infinite alternate;
+
+    max-width: 92vw;
+  }
+
+  /* Desktop order: MY LOVE on top, HAPPY BIRTHDAY below (right side) */
+  #birthday-text1{
+    top: 46%;
+    right: clamp(12px, 22vw, 310px);
+    transform: translateY(-50%);
+    font-family: Parisienne, cursive;
+    font-size: clamp(44px, 4.2vw, 70px);
+    line-height: 1.05;
+    text-align: right;
+    width: min(520px, 92vw);
+  }
+  #birthday-text2{
+    top: 58%;
+    right: clamp(12px, 6vw, 60px);
+    transform: translateY(-50%);
+    font-family: Poppins, sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(16px, 2.8vw, 34px);
+    letter-spacing: .14em;
+    line-height: 1.2;
+    text-align: right;
+    width: min(640px, 92vw);
+  }
+
+  /* Mobile: texts at bottom */
+  @media (max-width: 700px){
+    #birthday-text1, #birthday-text2{
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 92vw;
+      animation: floatGlowBottom 2.2s ease-in-out infinite alternate;
+    }
+    #birthday-text1{
+      top: auto;
+      bottom: 96px;
+      font-size: clamp(34px, 9vw, 54px);
+      white-space: normal;
+      line-height: 1.05;
+    }
+    #birthday-text2{
+      top: auto;
+      bottom: 46px;
+      font-size: clamp(13px, 4.2vw, 20px);
+      white-space: normal;
+      letter-spacing: .12em;
+      line-height: 1.2;
+    }
+    @keyframes floatGlowBottom{
+      0%   { transform: translateX(-50%) translateY(0) scale(1); }
+      50%  { transform: translateX(-50%) translateY(-10px) scale(1.04); }
+      100% { transform: translateX(-50%) translateY(0) scale(1); }
+    }
+  }
+
+  @keyframes floatGlow{
+    0%   { transform: translateY(-50%) scale(1); }
+    50%  { transform: translateY(-54%) scale(1.04); }
+    100% { transform: translateY(-50%) scale(1); }
+  }
+</style>
+</head>
+
+<body>
+
+  <div id="lamp-container">
+    <div id="shade"></div>
+    <div id="neck"><div id="bulb"></div></div>
+    <div id="pole"></div>
+    <div id="base"></div>
+    <div id="wire"><div id="wire-ball"></div></div>
+
+    <div id="lamp-shape">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <button id="click-me">Click Me</button>
+  </div>
+
+  <div id="spotlight-effect"></div>
+  <div id="alert-message"></div>
+
+  <div id="birthday-text1">MY LOVE!</div>
+  <div id="birthday-text2">HAPPY 21st BIRTHDAY</div>
+
+<script>
+const lampContainer = document.getElementById('lamp-container');
+const wire = document.getElementById('wire');
+const bulb = document.getElementById('bulb');
+const spotlightEffect = document.getElementById('spotlight-effect');
+const alertMessage = document.getElementById('alert-message');
+const clickMeBtn = document.getElementById('click-me');
+const lampShape = document.getElementById('lamp-shape');
+const birthday1 = document.getElementById('birthday-text1');
+const birthday2 = document.getElementById('birthday-text2');
+
+let isDragging = false;
+let startY = 0;
+
+function isMobile(){
+  return window.matchMedia("(max-width: 700px)").matches;
+}
+
+/* Alert: don't show on mobile */
+function showAlert(message) {
+  if (isMobile()) return;
+  alertMessage.textContent = message;
+  alertMessage.style.opacity = 1;
+}
+function hideAlert() { alertMessage.style.opacity = 0; }
+
+function showBirthday() {
+  birthday1.style.opacity = 1;
+  birthday2.style.opacity = 1;
+}
+
+/* read lamp scale so drag feels same after scaling */
+function getLampScale(){
+  const tr = getComputedStyle(lampContainer).transform;
+  if(!tr || tr === "none") return 1;
+
+  const m2 = tr.match(/^matrix\((.+)\)$/);
+  if(m2){
+    const parts = m2[1].split(",").map(v => parseFloat(v.trim()));
+    return Number.isFinite(parts[0]) ? parts[0] : 1;
+  }
+
+  const m3 = tr.match(/^matrix3d\((.+)\)$/);
+  if(m3){
+    const parts = m3[1].split(",").map(v => parseFloat(v.trim()));
+    return Number.isFinite(parts[0]) ? parts[0] : 1;
+  }
+  return 1;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    showAlert('Drag the wire down to lit the bulb, drag up to dim/off!');
+  }, 500);
+});
+
+function updateLighting(deltaY){
+  const scale = getLampScale();
+  const dy = deltaY / scale;
+
+  wire.style.height = `${Math.max(40, 80 + dy)}px`;
+  const intensity = Math.max(0, Math.min(1, dy / 150));
+
+  if (intensity > 0) {
+    lampContainer.classList.add('lit');
+    hideAlert();
+    showBirthday();
+  } else {
+    lampContainer.classList.remove('lit');
+    birthday1.style.opacity = 0;
+    birthday2.style.opacity = 0;
+  }
+
+  // Spotlight updates (caps to viewport)
+  const bulbRect = bulb.getBoundingClientRect();
+  const maxBeamH = Math.min(900, window.innerHeight * 1.2);
+  const maxBeamWExtra = Math.min(200, window.innerWidth * 0.55);
+
+  spotlightEffect.style.top = `${bulbRect.top + bulbRect.height/2}px`;
+  spotlightEffect.style.left = `${bulbRect.left + bulbRect.width/2 - 50}px`;
+  spotlightEffect.style.opacity = intensity;
+  spotlightEffect.style.height = `${maxBeamH * intensity}px`;
+  spotlightEffect.style.width = `${50 + intensity * maxBeamWExtra}px`;
+  spotlightEffect.style.clipPath = `polygon(50% 0%, ${50 + intensity*25}% 100%, ${50 - intensity*25}% 100%)`;
+
+  bulb.style.opacity = intensity;
+  bulb.style.boxShadow = `0 0 ${5 + intensity*150}px ${2 + intensity*70}px rgba(255,215,0,${0.5 + intensity*2})`;
+
+  if (intensity > 0) {
+    clickMeBtn.classList.add('show');
+    lampShape.style.opacity = 0;
+  } else {
+    clickMeBtn.classList.remove('show');
+    lampShape.style.opacity = 1;
+  }
+}
+
+/* Mouse drag */
+wire.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startY = e.clientY;
+  wire.style.cursor = 'grabbing';
+});
+document.addEventListener('mouseup', () => {
+  isDragging = false;
+  wire.style.cursor = 'grab';
+});
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  updateLighting(e.clientY - startY);
+});
+
+/* Touch drag */
+wire.addEventListener('touchstart', (e) => {
+  isDragging = true;
+  startY = e.touches[0].clientY;
+  wire.style.cursor = 'grabbing';
+  e.preventDefault();
+}, { passive:false });
+
+document.addEventListener('touchend', () => {
+  isDragging = false;
+  wire.style.cursor = 'grab';
+});
+
+document.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  updateLighting(e.touches[0].clientY - startY);
+  e.preventDefault();
+}, { passive:false });
+
+clickMeBtn.addEventListener('click', () => {
+  window.location.href = '4.html';
+});
+</script>
+
+</body>
+</html>

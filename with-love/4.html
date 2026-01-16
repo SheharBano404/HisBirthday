@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>His_Birthday</title>
+
+<style>
+  :root{
+    --bg1:#ffe6f0;
+    --bg2:#ffcce0;
+
+    /* Calendar sizing (desktop defaults) */
+    --calW: 340px;
+    --gap: 10px;
+    --pad: 20px;
+    --topPad: 90px;
+
+    --day: 40px;
+    --radius: 12px;
+
+    --titleSize: 1.5em;
+    --weekSize: 1em;
+    --daySize: 1em;
+
+    --typingW: 400px;
+    --typingSize: 1.6em;
+
+    /* Safe area for iPhones */
+    --safeB: env(safe-area-inset-bottom, 0px);
+    --safeT: env(safe-area-inset-top, 0px);
+  }
+
+  body{
+    margin:0;
+    height: 100svh;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    background: linear-gradient(to bottom, var(--bg1), var(--bg2));
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* Calendar container */
+  #calendar{
+    width: var(--calW);
+    padding: var(--pad);
+    margin-right: 100px;
+
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 200, 220, 0.35);
+    border-radius: 25px;
+    box-shadow: 0 8px 40px rgba(255, 182, 193, 0.5);
+    color: aliceblue;
+
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: var(--gap);
+    padding-top: var(--topPad);
+
+    position: relative;
+    animation: softGlow 4s ease-in-out infinite alternate;
+  }
+
+  /* Month title */
+  #calendar::before{
+    content: "January 2026";
+    position:absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--titleSize);
+    font-weight: bold;
+    color: aliceblue;
+    text-shadow: 0 0 5px plum;
+    white-space: nowrap;
+  }
+
+  /* Weekday headers */
+  .weekday{
+    text-align:center;
+    font-weight:bold;
+    font-size: var(--weekSize);
+    color: aliceblue;
+    text-shadow: 0 0 5px plum;
+    user-select:none;
+  }
+
+  /* Calendar days */
+  .day{
+    width: var(--day);
+    height: var(--day);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: var(--radius);
+    font-weight:bold;
+    font-size: var(--daySize);
+    position:relative;
+    cursor:pointer;
+    transition: all 0.4s ease;
+    color: aliceblue;
+    text-shadow: 0 0 5px plum;
+    user-select:none;
+  }
+
+  .day:hover{
+    transform: scale(1.35) rotate(-2deg);
+    box-shadow: 0 0 20px rgba(255, 182, 193, 0.8), 0 0 10px rgba(255,182,193,0.4) inset;
+    background: rgba(255, 182, 193, 0.25);
+  }
+
+  .day-number{
+    position:relative;
+    z-index:2;
+    animation: twinkle 3s infinite;
+    color: aliceblue;
+    text-shadow: 0 0 5px plum;
+  }
+
+  @keyframes twinkle{
+    0%, 100% { text-shadow: 0 0 5px plum; }
+    50% { text-shadow: 0 0 15px #ffe6f0, 0 0 20px #ffccd5; }
+  }
+
+  /* Solid animated heart (day 19) */
+  #day-19 .heart{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%) scale(1);
+    color: aliceblue;
+    font-size: 3em;
+    opacity: 0;
+    pointer-events:none;
+    z-index:1;
+    animation: heartbeat 1s infinite alternate, sparkle 2s infinite alternate;
+    text-shadow: 0 0 5px plum;
+  }
+
+  /* Outlined heart (day 18) */
+  #day-18 .heart{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%) scale(1);
+    font-size: 3em;
+    opacity: 0;
+    pointer-events:none;
+    z-index:1;
+    color: transparent;
+    -webkit-text-stroke: 2px #ff99cc;
+    animation: heartbeat 1s infinite alternate, sparkleOutline 2s infinite alternate;
+  }
+
+  @keyframes heartbeat{
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.3); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+  }
+
+  @keyframes sparkle{
+    0% { text-shadow: 0 0 5px plum; }
+    50% { text-shadow: 0 0 15px #ff99aa, 0 0 20px #ffccd5; }
+    100% { text-shadow: 0 0 5px plum; }
+  }
+
+  @keyframes sparkleOutline{
+    0% { -webkit-text-stroke: 2px #ff99cc; }
+    50% { -webkit-text-stroke: 2px #ff3366; }
+    100% { -webkit-text-stroke: 2px #ff99cc; }
+  }
+
+  @keyframes softGlow{
+    0% { box-shadow: 0 8px 35px rgba(255,182,193,0.4), 0 0 25px rgba(255,182,193,0.2) inset; }
+    50% { box-shadow: 0 12px 45px rgba(255,105,180,0.6), 0 0 35px rgba(255,105,180,0.3) inset; }
+    100% { box-shadow: 0 8px 35px rgba(255,182,193,0.4), 0 0 25px rgba(255,182,193,0.2) inset; }
+  }
+
+  /* Typing container */
+  #typing-container{
+    position:absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--typingW);
+    max-width: 90vw;
+    z-index: 2;
+  }
+
+  #typing-text{
+    font-size: var(--typingSize);
+    font-weight: bold;
+    color: #ff3366;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    display:inline-block;
+    animation: pulse 2s infinite;
+    line-height: 1.35;
+  }
+
+  @keyframes pulse{
+    0%, 100% { color: #ff3366; }
+    50% { color: #ff6699; }
+  }
+
+  /* Caret */
+  #caret{
+    display:inline-block;
+    width: 10px;
+    height: 1.1em;
+    background-color:#ff3366;
+    margin-left: 6px;
+    transform: translateY(3px);
+    animation: blink .75s step-start infinite;
+  }
+
+  @keyframes blink{
+    0%,100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Floating stars */
+  .floating-heart{
+    position:absolute;
+    color:#ff99cc;
+    font-size: 1.5em;
+    animation: floatUp 6s linear infinite;
+    pointer-events:none;
+    opacity:0.6;
+    z-index: 0;
+  }
+
+  @keyframes floatUp{
+    0% { transform: translateY(0) scale(0.8); opacity: 0.6; }
+    50% { transform: translateY(-80px) scale(1); opacity: 1; }
+    100% { transform: translateY(-160px) scale(0.8); opacity: 0; }
+  }
+
+  /* Heart firework particles */
+  .heart-firework{
+    position:absolute;
+    width: 7px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff6699;
+    pointer-events:none;
+    opacity: 0;
+    animation: heartBurst 1.2s forwards;
+    z-index: 3;
+  }
+
+  @keyframes heartBurst{
+    0% { transform: translate(0,0) scale(0.3); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(1); opacity: 0; }
+  }
+
+  /* =========================
+     MOBILE: CALENDAR TOP, TEXT BOTTOM
+     (styling preserved, only layout + sizes change)
+     ========================= */
+  @media (max-width: 720px){
+    body{
+      display:flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: calc(10px + var(--safeT)) 0 calc(12px + var(--safeB));
+    }
+
+    :root{
+      --calW: min(320px, 92vw);
+      --gap: clamp(5px, 1.6vw, 8px);
+      --pad: clamp(12px, 3.5vw, 16px);
+      --topPad: clamp(58px, 12vw, 72px);
+
+      --day: clamp(30px, 8.6vw, 36px);
+      --radius: clamp(10px, 2.6vw, 12px);
+
+      --titleSize: clamp(1.05em, 4.6vw, 1.25em);
+      --weekSize: clamp(.78em, 3.0vw, .95em);
+      --daySize: clamp(.82em, 3.0vw, .95em);
+
+      --typingW: min(560px, 92vw);
+      --typingSize: clamp(1.0em, 4.2vw, 1.25em);
+    }
+
+    #calendar{
+      margin-right: -15px;
+      margin-top: 6px;
+      /* keep it at the top */
+      align-self: center;
+    }
+
+    #calendar::before{
+      top: 12px;
+    }
+
+    /* Put typing at bottom (not absolute) */
+    #typing-container{
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+
+      width: var(--typingW);
+      max-width: 85vw;
+      text-align: center;
+      padding: 0 14px;
+      margin-bottom: 2px;
+    }
+  }
+
+  /* very small phones */
+  @media (max-width: 380px){
+    :root{
+      --calW: min(300px, 92vw);
+      --day: clamp(28px, 8.2vw, 34px);
+    }
+  }
+</style>
+</head>
+
+<body>
+
+  <div id="calendar">
+    <div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div>
+    <div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>
+
+    <div></div><div></div><div></div>
+
+    <div class="day"><span class="day-number">1</span></div>
+    <div class="day"><span class="day-number">2</span></div>
+    <div class="day"><span class="day-number">3</span></div>
+    <div class="day"><span class="day-number">4</span></div>
+    <div class="day"><span class="day-number">5</span></div>
+    <div class="day"><span class="day-number">6</span></div>
+    <div class="day"><span class="day-number">7</span></div>
+    <div class="day"><span class="day-number">8</span></div>
+    <div class="day"><span class="day-number">9</span></div>
+    <div class="day"><span class="day-number">10</span></div>
+    <div class="day"><span class="day-number">11</span></div>
+    <div class="day"><span class="day-number">12</span></div>
+    <div class="day"><span class="day-number">13</span></div>
+    <div class="day"><span class="day-number">14</span></div>
+    <div class="day"><span class="day-number">15</span></div>
+    <div class="day"><span class="day-number">16</span></div>
+    <div class="day"><span class="day-number">17</span></div>
+
+    <div class="day" id="day-18"><span class="day-number">18</span><span class="heart">❤</span></div>
+    <div class="day" id="day-19"><span class="day-number">19</span><span class="heart">❤️</span></div>
+
+    <div class="day"><span class="day-number">20</span></div>
+    <div class="day"><span class="day-number">21</span></div>
+    <div class="day"><span class="day-number">22</span></div>
+    <div class="day"><span class="day-number">23</span></div>
+    <div class="day"><span class="day-number">24</span></div>
+    <div class="day"><span class="day-number">25</span></div>
+    <div class="day"><span class="day-number">26</span></div>
+    <div class="day"><span class="day-number">27</span></div>
+    <div class="day"><span class="day-number">28</span></div>
+    <div class="day"><span class="day-number">29</span></div>
+    <div class="day"><span class="day-number">30</span></div>
+    <div class="day"><span class="day-number">31</span></div>
+  </div>
+
+  <div id="typing-container">
+    <span id="typing-text"></span><span id="caret"></span>
+  </div>
+
+<script>
+  function burstAround(el, particles = 25){
+    const rect = el.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    for(let i=0;i<particles;i++){
+      const t = i/particles * 2 * Math.PI;
+      const scale = 4.5;
+      const x = 16*Math.pow(Math.sin(t),3)*scale;
+      const y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*scale;
+
+      const f = document.createElement('div');
+      f.className = 'heart-firework';
+      f.style.left = `${centerX}px`;
+      f.style.top = `${centerY}px`;
+      f.style.setProperty('--x', `${x}px`);
+      f.style.setProperty('--y', `${y}px`);
+      document.body.appendChild(f);
+      setTimeout(()=>f.remove(), 1200);
+    }
+  }
+
+  setTimeout(() => {
+    const day18 = document.getElementById('day-18');
+    day18.querySelector('.heart').style.opacity = 1;
+    setInterval(() => burstAround(day18), 1000);
+  }, 2000);
+
+  setTimeout(() => {
+    const day19 = document.getElementById('day-19');
+    day19.querySelector('.heart').style.opacity = 1;
+    setInterval(() => burstAround(day19), 1000);
+  }, 2000);
+
+  // Floating stars/hearts (responsive positions)
+  setInterval(() => {
+    const star = document.createElement('div');
+    star.className = 'floating-heart';
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    star.style.left = `${Math.random() * w}px`;
+    star.style.top  = `${Math.random() * Math.min(h * 0.6, 420) + 30}px`;
+    star.textContent = '⭐';
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 6000);
+  }, 800);
+
+  const text1 =
+`I’m confused, my love, on which day is true,
+Is it the eighteenth or the nineteenth for you?
+But why should I worry, why should I choose,
+I’ll celebrate both, no joy will I lose.
+Two nights of candles, two mornings of song,
+For your birthday, my darling, twice I belong.`;
+
+  const text2 =
+`My heart’s sweetest light,
+I want to make these day sparkle so bright,
+Because you’re my treasure, my joy, my delight,
+Every moment with you feels perfectly right! 💖`;
+
+  const typingText = document.getElementById('typing-text');
+  let index = 0;
+  let currentText = text1;
+
+  function type() {
+    if(index < currentText.length){
+      typingText.textContent += currentText.charAt(index);
+      index++;
+      setTimeout(type, 60);
+    } else {
+      if(currentText === text1) {
+        setTimeout(() => {
+          typingText.textContent = "";
+          index = 0;
+          currentText = text2;
+          type();
+        }, 2000);
+      } else {
+        setTimeout(() => { window.location.href = '5.html'; }, 3000);
+      }
+    }
+  }
+  type();
+</script>
+
+</body>
+</html>
